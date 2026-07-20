@@ -1,6 +1,6 @@
 const express = require('express');
-const cors = require('cors'); // this will be discussed later
-const helmet = require('helmet'); // this will be discussed later
+const cors = require('cors');
+const helmet = require('helmet');
 const dotenv = require('dotenv');
 
 dotenv.config();
@@ -13,6 +13,14 @@ app.use(express.json());
 
 app.get('/', (req, res) => {
 res.send('PulseVote API running!');
+});
+
+app.get('/test', (req, res) => {
+    res.json({
+    message: 'This is a test endpoint from PulseVote API!',
+    status: 'success',
+    timestamp: new Date()
+    });
 });
 
 module.exports = app;
