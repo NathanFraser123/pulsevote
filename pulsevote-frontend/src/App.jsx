@@ -1,30 +1,33 @@
-import { useState, useEffect } from 'react'
-import './App.css'
+import "./App.css";
+import { Routes, Route } from "react-router-dom";
+import Layout from "./components/Layout";
+import ProtectedRoute from "./components/ProtectedRoute";
+import HomePage from "./pages/HomePage";
+import LoginPage from "./pages/LoginPage";
+import RegisterPage from "./pages/RegisterPage";
+import LogoutPage from "./pages/LogoutPage";
+import DashboardPage from "./pages/DashboardPage";
 
 function App() {
+  return (
+    <Routes>
+      <Route path="/" element={<Layout />}>
+        <Route index element={<HomePage />} />
+        <Route path="login" element={<LoginPage />} />
+        <Route path="register" element={<RegisterPage />} />
+        <Route path="logout" element={<LogoutPage />} />
 
-const [apiTest, setApiTest] = useState(null);
-useEffect(() => {
-    fetch("https://localhost:5000/test")
-    .then(res => res.json())
-    .then(data => setApiTest(data))
-    .catch(() => setApiTest({ message: "API not reachable" }));
-}, []);
-
-return (
-    <>
-    <h2>Welcome to PulseVote</h2>
-
-    <hr />
-    <h3>API Test Endpoint Result:</h3>
-    {apiTest ? (
-        <pre>{JSON.stringify(apiTest, null, 2)}</pre>
-    ) : (
-        <span>Loading...</span>
-    )}
-
-    </>
-)
+        <Route
+          path="dashboard"
+          element={
+            <ProtectedRoute>
+              <DashboardPage />
+            </ProtectedRoute>
+          }
+        />
+      </Route>
+    </Routes>
+  );
 }
 
-export default App
+export default App;
