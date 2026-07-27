@@ -26,6 +26,20 @@ app.use(cors({
   credentials: true
 }));
 
+app.use(
+helmet.contentSecurityPolicy({
+    directives: {
+    defaultSrc: ["'self'"],
+    scriptSrc: ["'self'", "https://apis.google.com"],
+    styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
+    fontSrc: ["'self'", "https://fonts.gstatic.com"],
+    imgSrc: ["'self'", "data:"],
+    connectSrc: ["'self'", "http://localhost:5000"], // or whichever port you use
+    },
+})
+);
+
+
 app.get("/api/protected", protect, (req, res) => {
   res.json({
     message: `Welcome, user ${req.user.id}! You have accessed protected data.`,
