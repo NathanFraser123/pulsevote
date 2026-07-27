@@ -1,6 +1,13 @@
 import { useState } from "react";
 import axios from "axios";
 
+// Helper functions for validation
+const isValidEmail = (email) =>
+  /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+
+const isStrongPassword = (password) =>
+  /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]{8,}$/.test(password);
+
 export default function Register() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -10,6 +17,25 @@ export default function Register() {
   const register = async () => {
     setError("");
     setSuccess("");
+
+    // --- ADDED VALIDATION HERE ---
+    if (!email || !password) {
+      setError("Email and password are required.");
+      return;
+    }
+
+    if (!isValidEmail(email)) {
+      setError("Invalid email format.");
+      return;
+    }
+
+    if (!isStrongPassword(password)) {
+      setError(
+        "Password must be at least 8 characters long and include letters and numbers."
+      );
+      return;
+    }
+    // -----------------------------
 
     try {
       const response = await axios.post(
@@ -47,12 +73,14 @@ export default function Register() {
       <input
         type="email"
         placeholder="Email"
+        value={email}
         onChange={(event) => setEmail(event.target.value)}
       />
 
       <input
         type="password"
         placeholder="Password"
+        value={password}
         onChange={(event) => setPassword(event.target.value)}
       />
 

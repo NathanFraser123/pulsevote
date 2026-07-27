@@ -2,6 +2,16 @@ import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
+// Helper functions for validation
+const isValidEmail = (email) => {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+};
+
+const isStrongPassword = (password) => {
+  // At least 8 characters, at least one letter, and at least one number
+  return /^(?=.*[A-Za-z])(?=.*\d).{8,}$/.test(password);
+};
+
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -13,6 +23,23 @@ export default function Login() {
   const login = async () => {
     setError("");
     setSuccess("");
+
+    // --- ADDED VALIDATION HERE ---
+    if (!email || !password) {
+      setError("Email and password are required.");
+      return;
+    }
+
+    if (!isValidEmail(email)) {
+      setError("Invalid email format.");
+      return;
+    }
+
+    if (!isStrongPassword(password)) {
+      setError("Password must be at least 8 characters long and include letters and numbers.");
+      return;
+    }
+    // -----------------------------
 
     try {
       const response = await axios.post(
@@ -54,12 +81,14 @@ export default function Login() {
       <input
         type="email"
         placeholder="Email"
+        value={email}
         onChange={(event) => setEmail(event.target.value)}
       />
 
       <input
         type="password"
         placeholder="Password"
+        value={password}
         onChange={(event) => setPassword(event.target.value)}
       />
 
