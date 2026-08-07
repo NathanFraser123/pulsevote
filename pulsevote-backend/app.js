@@ -33,7 +33,7 @@ app.use(
 app.use(express.json());
 
 // --- ROUTES ---
-app.use("/api/auth", authRoutes);
+app.use("/api", authRoutes);
 
 app.get("/api/protected", protect, (req, res) => {
   res.json({

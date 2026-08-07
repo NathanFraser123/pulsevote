@@ -56,28 +56,28 @@ const validateRequest = (req, res, next) => {
 };
 
 // --- POLL ROUTES ---
-router.post("/create-poll", protect, requireRole("manager"), createPoll);
-router.post("/vote/:pollId", protect, requireRole("user"), votePoll);
-router.get("/get-poll-results/:pollId", protect, getPollResults);
-router.get("/get-polls/:organisationId", protect, getOrgPolls);
-router.post("/close/:pollId", protect, requireRole("manager"), closePoll);
-router.post("/open/:pollId", protect, requireRole("manager"), openPoll);
+router.post("/polls/create-poll", protect, requireRole("manager"), createPoll);
+router.post("/polls/vote/:pollId", protect, requireRole("user"), votePoll);
+router.get("/polls/get-poll-results/:pollId", protect, getPollResults);
+router.get("/polls/get-polls/:organisationId", protect, getOrgPolls);
+router.post("/polls/close/:pollId", protect, requireRole("manager"), closePoll);
+router.post("/polls/open/:pollId", protect, requireRole("manager"), openPoll);
 
 // --- ORGANISATION ROUTES ---
-router.post("/create-organisation", protect, requireRole("manager"), createOrganisation);
-router.post("/generate-join-code/:organisationId/", protect, requireRole("manager"), generateJoinCode);
-router.post("/join-organisation", protect, joinOrganisation);
+router.post("/organisations/create-organisation", protect, requireRole("manager"), createOrganisation);
+router.post("/organisations/generate-join-code/:organisationId/", protect, requireRole("manager"), generateJoinCode);
+router.post("/organisations/join-organisation", protect, joinOrganisation);
 
 // --- AUTHENTICATION ROUTES ---
 router.post(
-  "/register-user",
+  "/auth/register-user",
   [emailValidator, passwordValidator],
   validateRequest,
   registerUser
 );
 
 router.post(
-  "/register-manager",
+  "/auth/register-manager",
   protect,
   requireRole("admin"),
   [emailValidator, passwordValidator],
@@ -86,14 +86,14 @@ router.post(
 );
 
 router.post(
-  "/register-admin",
+  "/auth/register-admin",
   [emailValidator, passwordValidator],
   validateRequest,
   registerAdmin
 );
 
 router.post(
-  "/login",
+  "/auth/login",
   [
     emailValidator,
     body("password").notEmpty().withMessage("Password is required")
@@ -102,5 +102,4 @@ router.post(
   login
 );
 
-// MUST BE HERE AT THE END:
 module.exports = router;
