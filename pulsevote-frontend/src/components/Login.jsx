@@ -1,100 +1,81 @@
 import { useState } from "react";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
-
-// Helper functions for validation
-const isValidEmail = (email) => {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-};
-
-const isStrongPassword = (password) => {
-  // At least 8 characters, at least one letter, and at least one number
-  return /^(?=.*[A-Za-z])(?=.*\d).{8,}$/.test(password);
-};
+import api from "../api/api";
+import { saveToken } from "../utils/auth";
+import { getErrorMessage } from "../utils/messages";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
-
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const login = async () => {
+  async function handleSubmit(event) {
+    event.preventDefault();
     setError("");
-    setSuccess("");
-
-    // --- ADDED VALIDATION HERE ---
-    if (!email || !password) {
-      setError("Email and password are required.");
-      return;
-    }
-
-    if (!isValidEmail(email)) {
-      setError("Invalid email format.");
-      return;
-    }
-
-    if (!isStrongPassword(password)) {
-      setError("Password must be at least 8 characters long and include letters and numbers.");
-      return;
-    }
-    // -----------------------------
+    setLoading(true);
 
     try {
-      const response = await axios.post(
-        "https://localhost:5000/api/auth/login",
-        {
-          email,
-          password
-        }
-      );
-
-      localStorage.setItem("token", response.data.token);
-      setSuccess("Successfully logged in.");
-
-      setTimeout(() => {
-        navigate("/dashboard");
-      }, 1000);
-    } catch (err) {
-      setError(
-        err.response?.data?.message ||
-        "Login failed."
-      );
+      // Matches app.use("/api", authRoutes) + router.post("/auth/login")
+      const response = await api.post("/auth/login", { email, password });
+      
+      saveToken(response.data.token);
+      navigate("/dashboard");
+    } catch (requestError) {
+      setError(getErrorMessage(requestError));
+    } finally {
+      setLoading(false);
     }
-  };
+  }
 
   return (
-    <div>
+    <form onSubmit={handleSubmit} className="form-stack" noValidate>
+      <h2>Login</h2>
+
       {error && (
-        <div className="error-message">
+        <div className="error-message" role="alert">
           {error}
         </div>
       )}
 
-      {success && (
-        <div className="success-message">
-          {success}
-        </div>
-      )}
-
+      <label htmlFor="email">Email</label>
       <input
+        id="email"
         type="email"
-        placeholder="Email"
         value={email}
-        onChange={(event) => setEmail(event.target.value)}
+        onChange={(e) => setEmail(e.target.value)}
+        placeholder="you@example.com"
+        autoComplete="email"
+        disabled={loading}
+        required
       />
 
+      <label htmlFor="password">Password</label>
       <input
-        type="password"
-        placeholder="Password"
+        id="password"
+        type={showPassword ? "text" : "password"}
         value={password}
-        onChange={(event) => setPassword(event.target.value)}
+        onChange={(e) => setPassword(e.target.value)}
+        autoComplete="current-password"
+        disabled={loading}
+        required
       />
 
-      <button onClick={login}>
-        Login
+      <label className="inline-control">
+        <input
+          type="checkbox"
+          checked={showPassword}
+          onChange={(e) => setShowPassword(e.target.checked)}
+          disabled={loading}
+        />
+        Show password
+      </label>
+
+      <button type="submit" disabled={loading}>
+        {loading ? "Logging in..." : "Login"}
       </button>
-    </div>
+    </form>
   );
 }

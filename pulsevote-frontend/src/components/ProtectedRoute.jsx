@@ -1,9 +1,6 @@
 import { Navigate } from "react-router-dom";
+import { getCurrentUser } from "../utils/auth";
 
 export default function ProtectedRoute({ children }) {
-  const token = localStorage.getItem("token");
-
-  return token
-    ? children
-    : <Navigate to="/login" />;
+  return getCurrentUser() ? children : <Navigate to="/login" replace />;
 }

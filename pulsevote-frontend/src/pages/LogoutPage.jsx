@@ -1,27 +1,14 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { logout } from "../utils/auth";
 
 export default function LogoutPage() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    localStorage.removeItem("token");
-
-    const timer = setTimeout(() => {
-      navigate("/");
-    }, 3000);
-
-    return () => clearTimeout(timer);
+    logout();
+    navigate("/", { replace: true });
   }, [navigate]);
 
-  return (
-    <div className="card">
-      <h2>Logged Out</h2>
-
-      <p>
-        You have been successfully logged out.
-        Redirecting to the homepage...
-      </p>
-    </div>
-  );
+  return <div className="card"><p>Logging out...</p></div>;
 }

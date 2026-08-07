@@ -1,92 +1,124 @@
 import { useState } from "react";
-import axios from "axios";
-
-// Helper functions for validation
-const isValidEmail = (email) =>
-  /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-
-const isStrongPassword = (password) =>
-  /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]{8,}$/.test(password);
+import { useNavigate } from "react-router-dom";
+import api from "../api/api";
+import { saveToken } from "../utils/auth";
+import { getErrorMessage } from "../utils/messages";
 
 export default function Register() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
-  const register = async () => {
+  // Validate password rules matching backend express-validator
+  function validateInputs() {
+    if (password !== confirmPassword) {
+      setError("Passwords do not match.");
+      return false;
+    }
+
+    if (password.length < 8) {
+      setError("Password must be at least 8 characters long.");
+      return false;
+    }
+
+    const hasLetter = /[A-Za-z]/.test(password);
+    const hasNumber = /\d/.test(password);
+
+    if (!hasLetter || !hasNumber) {
+      setError("Password must contain at least one letter and one number.");
+      return false;
+    }
+
+    return true;
+  }
+
+  async function handleSubmit(event) {
+    event.preventDefault();
     setError("");
-    setSuccess("");
 
-    // --- ADDED VALIDATION HERE ---
-    if (!email || !password) {
-      setError("Email and password are required.");
+    if (!validateInputs()) {
       return;
     }
 
-    if (!isValidEmail(email)) {
-      setError("Invalid email format.");
-      return;
-    }
-
-    if (!isStrongPassword(password)) {
-      setError(
-        "Password must be at least 8 characters long and include letters and numbers."
-      );
-      return;
-    }
-    // -----------------------------
+    setLoading(true);
 
     try {
-      const response = await axios.post(
-        "https://localhost:5000/api/auth/register",
-        {
-          email,
-          password
-        }
-      );
+      const response = await api.post("/auth/register-user", {
+        email: email.trim(),
+        password
+      });
 
-      localStorage.setItem("token", response.data.token);
-      setSuccess("Registered and logged in!");
-    } catch (err) {
-      setError(
-        err.response?.data?.message ||
-        "Error registering."
-      );
+      saveToken(response.data.token);
+      navigate("/dashboard");
+    } catch (requestError) {
+      setError(getErrorMessage(requestError));
+    } finally {
+      setLoading(false);
     }
-  };
+  }
 
   return (
-    <div>
+    <form onSubmit={handleSubmit} className="form-stack" noValidate>
+      <h2>Create Account</h2>
+
       {error && (
-        <div className="error-message">
+        <div className="error-message" role="alert">
           {error}
         </div>
       )}
 
-      {success && (
-        <div className="success-message">
-          {success}
-        </div>
-      )}
-
+      <label htmlFor="email">Email</label>
       <input
+        id="email"
         type="email"
-        placeholder="Email"
         value={email}
-        onChange={(event) => setEmail(event.target.value)}
+        onChange={(e) => setEmail(e.target.value)}
+        placeholder="you@example.com"
+        autoComplete="email"
+        disabled={loading}
+        required
       />
 
+      <label htmlFor="password">Password</label>
       <input
-        type="password"
-        placeholder="Password"
+        id="password"
+        type={showPassword ? "text" : "password"}
         value={password}
-        onChange={(event) => setPassword(event.target.value)}
+        onChange={(e) => setPassword(e.target.value)}
+        placeholder="At least 8 chars, 1 letter, 1 number"
+        autoComplete="new-password"
+        disabled={loading}
+        required
       />
 
-      <button onClick={register}>
-        Register
+      <label htmlFor="confirmPassword">Confirm Password</label>
+      <input
+        id="confirmPassword"
+        type={showPassword ? "text" : "password"}
+        value={confirmPassword}
+        onChange={(e) => setConfirmPassword(e.target.value)}
+        autoComplete="new-password"
+        disabled={loading}
+        required
+      />
+
+      <label className="inline-control">
+        <input
+          type="checkbox"
+          checked={showPassword}
+          onChange={(e) => setShowPassword(e.target.checked)}
+          disabled={loading}
+        />
+        Show password
+      </label>
+
+      <button type="submit" disabled={loading}>
+        {loading ? "Registering..." : "Register"}
       </button>
-    </div>
+    </form>
   );
 }

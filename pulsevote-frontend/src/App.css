@@ -1,162 +1,51 @@
-/* ==== Base Theme ==== */
 :root {
-  --color-bg: #1e1e1e;
-  --color-fg: #ffffff;
-  --color-muted: #888;
-  --color-accent: #4ea1ff;
-  --color-border: #333;
-  --color-input: #2a2a2a;
-  --color-btn: #121212;
-  --color-btn-hover: #333;
-  --font-family: 'Segoe UI', Roboto, sans-serif;
-  color-scheme: light dark;
+  font-family: "Segoe UI", system-ui, sans-serif;
+  color: #f5f7fb;
+  background: #121821;
+  color-scheme: dark;
 }
 
-/* ==== Global Styles ==== */
-body {
-  font-family: var(--font-family);
-  background-color: var(--color-bg);
-  color: var(--color-fg);
-  margin: 0;
-  padding: 2rem;
-}
+* { box-sizing: border-box; }
+body { margin: 0; min-width: 320px; min-height: 100vh; background: #121821; }
+button, input, select { font: inherit; }
+button { border: 0; border-radius: 8px; padding: .7rem 1rem; background: #4e8cff; color: white; cursor: pointer; }
+button:disabled { opacity: .55; cursor: not-allowed; }
+button.secondary { background: #34445d; }
+button.danger { background: #8f3540; }
+input, select { width: 100%; padding: .75rem; border: 1px solid #41506a; border-radius: 8px; background: #1c2533; color: white; }
+label { display: grid; gap: .35rem; }
+code { padding: .2rem .4rem; border-radius: 4px; background: #111722; }
 
-/* ==== Typography ==== */
-h1, h2, h3 {
-  margin-bottom: 1rem;
-  font-weight: 600;
-  letter-spacing: 0.5px;
-}
+.app-shell { width: min(1120px, 94%); margin: auto; padding: 1.5rem 0 3rem; }
+header { display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+nav { display: flex; gap: .8rem; flex-wrap: wrap; }
+nav a { color: #a9c9ff; text-decoration: none; padding: .4rem .6rem; border-radius: 6px; }
+nav a.active { background: #263753; color: white; }
+main { margin-top: 1.5rem; }
 
-p {
-  margin-bottom: 1rem;
-  color: var(--color-muted);
-}
+.card, .panel, .poll-card { background: #1a2330; border: 1px solid #2c3a4f; border-radius: 14px; padding: 1.25rem; }
+.dashboard-page { display: grid; gap: 1rem; }
+.panel { display: grid; gap: 1rem; }
+.account-summary { margin-bottom: .25rem; }
+.form-stack { display: grid; gap: .8rem; }
+.compact-form { max-width: 620px; }
+.inline-control, .option-row { display: flex; align-items: center; gap: .6rem; }
+.inline-control input, .option-row input { width: auto; }
+.option-editor { display: flex; gap: .6rem; align-items: center; }
+.option-editor input { flex: 1; }
+.organisation-summary { padding: 1rem; border: 1px dashed #475a77; border-radius: 10px; }
+.poll-list { display: grid; gap: 1rem; }
+.poll-heading { display: flex; justify-content: space-between; gap: 1rem; align-items: start; }
+.status { text-transform: uppercase; font-size: .78rem; padding: .3rem .5rem; border-radius: 999px; }
+.status.open { background: #244e39; }
+.status.closed { background: #63353a; }
+.option-list { display: grid; gap: .65rem; margin: 1rem 0; }
+.results { display: grid; gap: .5rem; margin: 1rem 0; }
+.result-row { display: flex; justify-content: space-between; gap: 1rem; padding: .55rem 0; border-bottom: 1px solid #2c3a4f; }
+.error-message, .success-message { padding: .75rem; border-radius: 8px; }
+.error-message { background: #512b31; color: #ffd7dc; }
+.success-message { background: #234936; color: #d6ffe7; }
 
-/* ==== Navigation ==== */
-nav {
-  display: flex;
-  justify-content: center;
-  gap: 1.5rem; /* space between links */
-  margin-top: 0.5rem;
-  margin-bottom: 1.5rem;
-  border-bottom: 1px solid var(--color-border);
-  padding-bottom: 0.5rem;
-}
-
-nav a {
-  color: var(--color-accent);
-  text-decoration: none;
-  font-weight: 500;
-  padding: 0.25rem 0.5rem;
-  transition: color 0.2s ease;
-}
-
-nav a:hover {
-  text-decoration: underline;
-  color: var(--color-fg); /* subtle hover effect */
-}
-
-nav a.active {
-  border-bottom: 2px solid var(--color-accent);
-  padding-bottom: 0.25rem;
-}
-/* ==== Forms ==== */
-form {
-  margin-top: 1rem;
-}
-
-input[type="email"],
-input[type="password"],
-input[type="text"] {
-  display: block;
-  width: 100%;
-  max-width: 300px;
-  margin-bottom: 1rem;
-  padding: 0.75rem;
-  border-radius: 6px;
-  border: 1px solid var(--color-border);
-  background-color: var(--color-input);
-  color: var(--color-fg);
-}
-
-/* ==== Buttons ==== */
-button {
-  background-color: var(--color-btn);
-  color: var(--color-fg);
-  padding: 0.6rem 1.2rem;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 1rem;
-}
-
-button:hover {
-  background-color: var(--color-btn-hover);
-}
-
-/* Center the app layout vertically & horizontally */
-.page-wrapper {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 30vh;
-  padding: 1rem;
-}
-
-/* Optional background panel */
-.card {
-  background-color: #2a2a2a;
-  border-radius: 12px;
-  padding: 2rem 3rem;
-  max-width: 500px;
-  width: 100%;
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
-}
-
-/* Clean container layout */
-.container {
-  max-width: 800px;
-  margin: auto;
-  padding: 2rem;
-  text-align: center;
-}
-
-.app-shell {
-  max-width: 960px;
-  margin: 0 auto;
-  padding: 2rem;
-  width: 100%;
-  min-height: 50vh;
-  display: flex;
-  flex-direction: column;
-}
-
-main {
-  flex-grow: 1;
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: flex-start; /* changed from center */
-  margin-top: 2rem;        /* optional fine-tune */
-}
-
-.error-message {
-  background-color: #2f1c1c;
-  color: #ff6b6b;
-  padding: 0.75rem;
-  border-radius: 6px;
-  margin-bottom: 1rem;
-  border: 1px solid #ff6b6b;
-  font-size: 0.95rem;
-}
-
-.success-message {
-  background-color: #1e2f1e;
-  color: #4afc75;
-  padding: 0.75rem 1rem;
-  border-radius: 6px;
-  margin-bottom: 1rem;
-  border: 1px solid #4afc75;
-  font-size: 0.95rem;
+@media (max-width: 620px) {
+  .option-editor, .result-row { align-items: stretch; flex-direction: column; }
 }
