@@ -1,6 +1,9 @@
 const express = require("express");
 const { body, validationResult } = require("express-validator");
 
+// Rate Limiters
+const { registerLimiter, loginLimiter } = require("../middleware/rateLimiter");
+
 // Auth Controller
 const {
   registerUser,
@@ -90,6 +93,7 @@ const votePollValidator = [
 // --- AUTHENTICATION ROUTES ---
 router.post(
   "/auth/register-user",
+  registerLimiter,
   [emailValidator, passwordValidator],
   validateRequest,
   registerUser
@@ -99,6 +103,7 @@ router.post(
   "/auth/register-manager",
   protect,
   requireRole("admin"),
+  registerLimiter,
   [emailValidator, passwordValidator],
   validateRequest,
   registerManager
@@ -106,6 +111,7 @@ router.post(
 
 router.post(
   "/auth/register-admin",
+  registerLimiter,
   [emailValidator, passwordValidator],
   validateRequest,
   registerAdmin
@@ -113,9 +119,10 @@ router.post(
 
 router.post(
   "/auth/login",
+  loginLimiter,
   [
     emailValidator,
-    body("password").notEmpty().withMessage("Password is required")
+    body("password").notEmpty().withMessage("Password is required").trim()
   ],
   validateRequest,
   login

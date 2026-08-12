@@ -10,6 +10,10 @@ const { protect } = require("./middleware/authMiddleware");
 
 const app = express();
 
+// --- TRUST PROXY ---
+// Required for express-rate-limit to read req.ip accurately behind reverse proxies/localhost
+app.set('trust proxy', 1);
+
 // --- GLOBAL MIDDLEWARE ---
 app.use(cors({
   origin: "https://localhost:5173",
@@ -53,5 +57,11 @@ app.get('/test', (req, res) => {
     timestamp: new Date()
   });
 });
+
+app.get('/health', (req, res) => 
+res.status(200).json({
+    ok: true,
+    ts: Date.now()
+}));
 
 module.exports = app;
