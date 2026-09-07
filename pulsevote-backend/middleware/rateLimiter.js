@@ -1,12 +1,14 @@
-// middleware/rateLimiter.js
 const rateLimit = require('express-rate-limit');
 
 const registerLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
   limit: 5,                 // express-rate-limit v7+
-  max: 5,                   // express-rate-limit v6 (Fixes default 100 limit!)
+  max: 5,                   // express-rate-limit v6
   standardHeaders: true,
   legacyHeaders: true,
+  validate: {
+    keyGeneratorIpFallback: false // Disables strict IPv6 validation error for custom keys
+  },
   // Force a consistent key for local testing so all requests count toward the same 5-request limit
   keyGenerator: (req) => {
     const ip = req.ip || req.headers['x-forwarded-for'] || req.socket?.remoteAddress || '127.0.0.1';
@@ -28,6 +30,9 @@ const loginLimiter = rateLimit({
   standardHeaders: true,
   legacyHeaders: true,
   skipSuccessfulRequests: true,
+  validate: {
+    keyGeneratorIpFallback: false // Disables strict IPv6 validation error for custom keys
+  },
   keyGenerator: (req) => {
     const email = req.body?.email?.toLowerCase().trim() || 'anonymous';
     return `login:${email}`;

@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "https://localhost:5000/api", // Changed https to http for standard local express
+  baseURL: "http://localhost:5000/api", // Changed https to http for standard local express
   headers: { "Content-Type": "application/json" }
 });
 

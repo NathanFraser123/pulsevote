@@ -1,30 +1,49 @@
-// 1. Load environment variables FIRST!
 require('dotenv').config();
 
-const dns = require('dns');
-dns.setServers(['8.8.8.8', '8.8.4.4']);
-
 const fs = require('fs');
+const http = require('http');
 const https = require('https');
 const mongoose = require('mongoose');
 const app = require('./app');
 
 const PORT = process.env.PORT || 5000;
+const HOST = '0.0.0.0'; // Binds to all interfaces inside Docker containers
+const useHttps = String(process.env.USE_HTTPS || '').toLowerCase() === 'true';
+const mongo = process.env.MONGO_URI;
 
-const options = {
-  key: fs.readFileSync('ssl/key.pem'),
-  cert: fs.readFileSync('ssl/cert.pem'),
-};
+if (!mongo) {
+  console.error('Missing MONGO_URI in environment variables');
+  process.exit(1);
+}
 
-// 2. Connect to database
-mongoose.connect(process.env.MONGO_URI)
+mongoose.connect(mongo)
   .then(() => {
     console.log('MongoDB connected successfully!');
-    // 3. Start server ONLY after successful DB connection
-    https.createServer(options, app).listen(PORT, () => {
-      console.log('Server running at https://localhost:' + PORT);
+
+    if (useHttps) {
+      const keyPath = process.env.SSL_KEY_PATH || 'ssl/key.pem';
+      const certPath = process.env.SSL_CERT_PATH || 'ssl/cert.pem';
+      const haveFiles = fs.existsSync(keyPath) && fs.existsSync(certPath);
+
+      if (!haveFiles) {
+        console.warn('SSL files not found, falling back to HTTP');
+      } else {
+        const options = {
+          key: fs.readFileSync(keyPath),
+          cert: fs.readFileSync(certPath)
+        };
+        https.createServer(options, app).listen(PORT, HOST, () => {
+          console.log(`HTTPS server running at https://localhost:${PORT}`);
+        });
+        return;
+      }
+    }
+
+    http.createServer(app).listen(PORT, HOST, () => {
+      console.log(`HTTP server running at http://localhost:${PORT}`);
     });
   })
-  .catch((err) => {
-    console.error('MongoDB connection error:', err);
+  .catch((_err) => {
+    console.error('MongoDB connection error:', _err);
+    process.exit(1);
   });
