@@ -6,8 +6,8 @@ const dotenv = require('dotenv');
 dotenv.config();
 
 const authRoutes = require("./routes/authRoutes");
-const organisationRoutes = require("./routes/organisationRoutes");
-const pollRoutes = require("./routes/pollRoutes");
+//const organisationRoutes = require("./routes/organisationRoutes");
+//const pollRoutes = require("./routes/pollRoutes");
 const { protect } = require("./middleware/authMiddleware");
 
 const app = express();
@@ -59,8 +59,8 @@ app.use(express.json());
 
 // --- ROUTES ---
 app.use("/api/auth", authRoutes);
-app.use("/api/organisations", organisationRoutes);
-app.use("/api/polls", pollRoutes);
+//app.use("/api/organisations", organisationRoutes);
+//app.use("/api/polls", pollRoutes);
 
 app.get('/health', (req, res) => 
   res.status(200).json({

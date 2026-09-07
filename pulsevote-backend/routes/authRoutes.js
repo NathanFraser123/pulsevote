@@ -21,7 +21,7 @@ const {
   joinOrganisation
 } = require("../controllers/organisationController");
 
-// Poll Controller
+// Poll Controller (Updated to match exact file casing: PollController.js)
 const {
   createPoll,
   votePoll,
@@ -29,7 +29,7 @@ const {
   getOrgPolls,
   closePoll,
   openPoll
-} = require("../controllers/pollController");
+} = require("../controllers/PollController");
 
 // Auth Middleware
 const { protect } = require("../middleware/authMiddleware");

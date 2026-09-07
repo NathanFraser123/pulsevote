@@ -1,0 +1,17 @@
+services:
+  api:
+    container_name: pulsevote-api
+    build:
+      context: ./pulsevote-backend
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+    env_file:
+      - ./pulsevote-backend/.env
+    restart: unless-stopped
+    networks:
+      - pulsevote-network
+
+networks:
+  pulsevote-network:
+    driver: bridge
