@@ -58,7 +58,7 @@ app.use(cors({
 app.use(express.json());
 
 // --- ROUTES ---
-app.use("/api/auth", authRoutes);
+app.use("/api", authRoutes);
 //app.use("/api/organisations", organisationRoutes);
 //app.use("/api/polls", pollRoutes);
 
