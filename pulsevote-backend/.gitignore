@@ -4,4 +4,3 @@ dist
 ssl
 .env.*.local
 postman
-scripts/clearDatabase.js
