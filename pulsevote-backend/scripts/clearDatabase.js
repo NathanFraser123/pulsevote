@@ -29,7 +29,8 @@ clearDatabase().catch(async (err) => {
   console.error(err.message);
   try {
     await mongoose.disconnect();
-  } catch {
+  } catch (disconnectErr) {
+    // eslint-disable-next-line no-empty
   }
   process.exit(1);
 });
